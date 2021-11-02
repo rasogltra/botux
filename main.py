@@ -1,3 +1,8 @@
+#parse utility for characterizing rRNA sequence into taxonimcal groups (OTUs)
+#Developer: Rashonda Ogletree
+#To execute this script in PyCharm- terminal us the following command:
+        - python main.py
+
 import os
 import re
 
@@ -8,12 +13,12 @@ first_line = 1
 seq_list = []
 seq_dict = {}
 
-wordsize = 8
+wordsize = 8 
 otucount= 1
 
 path = '/Users/rashondaogletree/PycharmProjects/pythonProject1/sample.txt'
 
-trimlength = input("Enter trimlength: ")
+trimlength = input("Enter trimlength: ") #usr standard input trimlength
 print("you entered " + trimlength)
 
 def is_file_empty(path):
@@ -25,7 +30,7 @@ is_empty = is_file_empty(path)
 if is_empty:
     print('File is empty')
 
-
+#this function appends words to a wordList then returns the list
 def word_list(sequence, wordsize):
     wordlist = []
 
@@ -35,6 +40,8 @@ def word_list(sequence, wordsize):
 
         return wordlist
 
+#this function takes sequence data, word frequency and wordlist. 
+#it creates a new OTU, if OTU not existing. OTU contains OTU name, word and word frequency 
 def make_otu(sequence, abundance, wordlist):
     otuname = "OTU"
     otu_dict = {}
@@ -57,6 +64,8 @@ def make_otu(sequence, abundance, wordlist):
     total_reads +=1
     print(otu_dict["seedSeq"]) #SeedSequencesFile
 
+#this function takes sequence data and a wordlist. 
+#scores an OTU based off a given threshold and then returns score
 def score_otu(sequence, wordList):
     bestotu = ""
     sumscore_for_otu = 0
@@ -90,6 +99,7 @@ def update_otu(sequence, abundance, wordList):
         seq_dict[otuname] = seq_dict.setdefault("totalCount", 0) + 1
         seq_dict["word"] = seq_dict.setdefault(word, 0) +abundance
 
+#parses sample files and stores data in sequence dictionary
 regex = r"^>([A-Z_0-9|a-z.]+)\s([A-Z]+)"
 for line in open(path, 'r'):
     a1 = re.search(regex, line)
@@ -111,6 +121,7 @@ for line in open(path, 'r'):
         sequence = ""
         first_line = 0
 
+#loops through sorted dictionary, sends data to create a new OTU or update an OTU with new sequencing data        
 for key in sorted(seq_dict):
     seq_len = len(key)
     if (seq_len > 10):
